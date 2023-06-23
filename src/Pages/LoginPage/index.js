@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 
+import {useHistory} from 'react-router-dom';
+
+import {Spinner} from "react-bootstrap";
 import './style.css';
 
 import {MdAlternateEmail} from 'react-icons/md';
@@ -7,14 +10,18 @@ import {RiLockPasswordFill} from 'react-icons/ri';
 import SammyDashboard from '../../Assets/img/sammy-dashboard.png';
 
 import api from '../../Utils/ApiEndpoint';
+import {useAuth} from "../../Utils/AuthContext";
 
 function LoginPage() {
-    const [isLoading, setIsLoading] = useState(false);
+
     const [loginInformation, setLoginInformation] = useState({
         email: '', password: '',
     });
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
+    const {login} = useAuth();
+    const history = useHistory();
 
     const loginAction = async (e) => {
         e.preventDefault();
@@ -22,12 +29,14 @@ function LoginPage() {
         try {
             let response = await api.post('user/login', loginInformation);
             setIsLoading(false);
-            console.log(response.status);
+            login(response.data.token, response.data.dataUser);
+            history.push('/');
         } catch (error) {
             setIsLoading(false);
             setIsError(true);
-            console.log(error.status);
+            setErrorMessage(error.response.data.message);
         }
+
     };
 
     const handleChange = (e) => {
@@ -68,18 +77,24 @@ function LoginPage() {
                                 />
                             </div>
                         </div>
-                        <div className="alert-section">
-                            <h6 className="text-danger">Salah Username atau Password</h6>
-                        </div>
+                        {isError ? <div className="alert-section">
+                            <h6 className="text-danger">{errorMessage}</h6>
+                        </div> : <></>}
                         <div className="mb-3">
-                            <button
+                            {isLoading ? <button
+                                type="submit"
+                                className="btn btn-login btn-disabled-custom"
+                                onClick={(e) => loginAction(e)}
+                                disabled
+                            >
+                                <Spinner animation="border" size="sm"/>
+                            </button> : <button
                                 type="submit"
                                 className="btn btn-login"
                                 onClick={(e) => loginAction(e)}
                             >
                                 Login
-                                {/* <Spinner animation="border" /> */}
-                            </button>
+                            </button>}
                         </div>
                     </form>
                 </div>
