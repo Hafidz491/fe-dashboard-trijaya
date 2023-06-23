@@ -1,0 +1,53 @@
+.dashboard-info {
+  width: 100%;
+  background-color: white;
+  margin-top: 40px;
+  padding: 30px 30px;
+  border-radius: 30px;
+}
+
+.dashboard-info-item-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  text-align: center;
+  position: relative;
+}
+
+.item-green {
+  background: linear-gradient(201.18deg, #d3ffe7 3.14%, #effff6 86.04%);
+}
+
+.item-blue {
+  background: linear-gradient(201.18deg, #caf1ff 3.14%, #cdf4ff 86.04%);
+}
+
+.item-red {
+  background: linear-gradient(201.18deg, #ffa3cf 3.14%, #ffd5f3 86.04%);
+}
+
+.divider {
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  height: 80px;
+}
+
+.search-icon {
+  position: absolute;
+  font-size: 38px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.icon-green {
+  color: #00b894;
+}
+
+.icon-blue {
+  color: #0984e3;
+}
+
+.icon-red {
+  color: #d63031;
+}

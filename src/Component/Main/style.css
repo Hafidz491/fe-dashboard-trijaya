@@ -1,0 +1,16 @@
+.main {
+  margin-left: 306px;
+  /* min-height: calc(100vh - 72px); */
+  position: relative;
+  overflow: hidden;
+}
+
+.main .main-info {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.main .main-info h4 {
+  color: #5e5ce6;
+  font-weight: 500;
+}
