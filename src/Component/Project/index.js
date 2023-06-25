@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Main from '../Main';
 import FormAddProject from '../FormAddProject';
+import { ToastContainer, Toast } from 'react-bootstrap';
 import './style.css';
 
 import {
@@ -61,13 +62,37 @@ export const data = {
 
 function Project() {
   const [showModalProject, setShowModalProject] = useState(false);
+  const [responseMessage, setResponseMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [thoastVariant, setThoastVariant] = useState('success');
 
   const handleShowModalProject = () => {
     setShowModalProject(!showModalProject);
   };
 
+  const handleShowToast = (responseMessage, toastVariant) => {
+    setShowToast(!showToast);
+    setThoastVariant(toastVariant);
+    setResponseMessage(responseMessage);
+  };
+
   return (
     <div className="project">
+      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1 }}>
+        <Toast
+          bg={thoastVariant}
+          className="text-white"
+          show={showToast}
+          delay={3000}
+          autohide
+          onClose={() => setShowToast(false)}
+        >
+          <Toast.Header>
+            <strong className="me-auto">Notifikasi</strong>
+          </Toast.Header>
+          <Toast.Body>{responseMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
       <Main>
         <div className="header-dashboard d-flex align-items-center justify-content-between">
           <h5>Project 📃</h5>
@@ -209,6 +234,7 @@ function Project() {
           </div>
         </div>
         <FormAddProject
+          handleShowToast={handleShowToast}
           handleShowModalProject={handleShowModalProject}
           showModalProject={showModalProject}
         />

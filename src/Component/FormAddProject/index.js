@@ -2,10 +2,95 @@ import { React, useState } from 'react';
 
 import Modal from '../Modal';
 
+import api from '../../Utils/ApiEndpoint';
+import { useAuth } from '../../Utils/AuthContext';
+
 import { BsTrash3 } from 'react-icons/bs';
 
-function FormAddProject({ showModalProject, handleShowModalProject }) {
-  const [isInstansiSaved, setIsInstansiSaved] = useState(true);
+function FormAddProject({
+  showModalProject,
+  handleShowModalProject,
+  handleShowToast,
+}) {
+  const { token } = useAuth();
+  const [isInstansiSaved, setIsInstansiSaved] = useState(false);
+  const [instansiWillUpdate, setInstansiWillUpdate] = useState(false);
+  const [document, setDocument] = useState();
+  const [instansiId, setInstansiId] = useState('');
+  const [instansiData, setInstansiData] = useState({
+    instansiName: '',
+    projectNumber: '',
+    address: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInstansiData({
+      ...instansiData,
+      [name]: value,
+    });
+  };
+
+  const handleDocumentFile = (e) => {
+    setDocument(e.target.files[0]);
+  };
+
+  const handleSaveInstansi = async (e) => {
+    e.preventDefault();
+    if (!instansiWillUpdate) {
+      try {
+        let newInstansiData = new FormData();
+        newInstansiData.append('instansiName', instansiData.instansiName);
+        newInstansiData.append(
+          'projectNumber',
+          `PX-${instansiData.projectNumber}`
+        );
+        newInstansiData.append('address', instansiData.address);
+        newInstansiData.append('document', document);
+        let response = await api.post('project/add', newInstansiData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        handleShowToast(response.data.message, 'success');
+        setInstansiId(response.data.data.id);
+        setIsInstansiSaved(true);
+      } catch (error) {
+        handleShowToast(error.response.data.message, 'danger');
+      }
+    } else {
+      try {
+        let newInstansiData = new FormData();
+        newInstansiData.append('instansiName', instansiData.instansiName);
+        newInstansiData.append(
+          'projectNumber',
+          `PX-${instansiData.projectNumber}`
+        );
+        newInstansiData.append('address', instansiData.address);
+        newInstansiData.append('document', document);
+        let response = await api.put(
+          `project/update/${instansiId}`,
+          newInstansiData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        handleShowToast(response.data.message, 'success');
+        setIsInstansiSaved(true);
+      } catch (error) {
+        handleShowToast(error.response.data.message, 'danger');
+      }
+    }
+  };
+
+  const handleInstansiWillUpdate = () => {
+    setInstansiWillUpdate(true);
+    setIsInstansiSaved(false);
+  };
 
   return (
     <Modal
@@ -14,63 +99,181 @@ function FormAddProject({ showModalProject, handleShowModalProject }) {
       modalTitle={'Tambah Project'}
     >
       <div className="form-add-product mt-4">
-        <div className="form-instansi">
-          <h5>Form Instansi</h5>
-          <div className="mb-3">
-            <label htmlFor="namaInstansi" className="form-label">
-              Nama Instansi
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="namaInstansi"
-              placeholder="Nama Instansi"
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="nomorProject" className="form-label">
-              Nomor Project
-            </label>
-            <div className="input-group">
-              <span className="input-group-text" id="basic-addon1">
-                PX-
-              </span>
+        {/* <form> */}
+        {isInstansiSaved ? (
+          <div className="form-instansi">
+            <h5>Form Instansi</h5>
+            <div className="mb-3">
+              <label htmlFor="namaInstansi" className="form-label">
+                Nama Instansi
+              </label>
               <input
+                disabled
+                value={instansiData.instansiName}
+                onChange={handleChange}
+                name="instansiName"
                 type="text"
                 className="form-control"
-                id="nomorProject"
-                placeholder="Nomor Project"
+                id="namaInstansi"
+                placeholder="Nama Instansi"
               />
             </div>
+            <div className="mb-3">
+              <label htmlFor="nomorProject" className="form-label">
+                Nomor Project
+              </label>
+              <div className="input-group">
+                <span className="input-group-text" id="basic-addon1">
+                  PX-
+                </span>
+                <input
+                  disabled
+                  value={instansiData.projectNumber}
+                  onChange={handleChange}
+                  name="projectNumber"
+                  type="text"
+                  className="form-control"
+                  id="nomorProject"
+                  placeholder="Nomor Project"
+                />
+              </div>
+            </div>
+            <div className="mb-3">
+              <label htmlFor="dokumen" className="form-label">
+                Dokumen
+              </label>
+              <input
+                disabled
+                onChange={handleDocumentFile}
+                className="form-control"
+                type="file"
+                id="formFile"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="address" className="form-label">
+                Alamat
+              </label>
+              <textarea
+                disabled
+                value={instansiData.address}
+                onChange={handleChange}
+                name="address"
+                className="form-control"
+                id="address"
+                rows="3"
+              ></textarea>
+            </div>
+            <div className="button-save-instansi-wrapper row">
+              {isInstansiSaved ? (
+                <>
+                  <button
+                    className="btn btn-success w-100"
+                    type="button"
+                    onClick={handleInstansiWillUpdate}
+                  >
+                    Edit Instansi
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="btn btn-add w-100"
+                    type="submit"
+                    onClick={handleSaveInstansi}
+                  >
+                    Simpan Instansi
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          <div className="mb-3">
-            <label htmlFor="dokumen" className="form-label">
-              Dokumen
-            </label>
-            <input className="form-control" type="file" id="formFile" />
+        ) : (
+          <div className="form-instansi">
+            <h5>Form Instansi</h5>
+            <div className="mb-3">
+              <label htmlFor="namaInstansi" className="form-label">
+                Nama Instansi
+              </label>
+              <input
+                value={instansiData.instansiName}
+                onChange={handleChange}
+                name="instansiName"
+                type="text"
+                className="form-control"
+                id="namaInstansi"
+                placeholder="Nama Instansi"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="nomorProject" className="form-label">
+                Nomor Project
+              </label>
+              <div className="input-group">
+                <span className="input-group-text" id="basic-addon1">
+                  PX-
+                </span>
+                <input
+                  value={instansiData.projectNumber}
+                  onChange={handleChange}
+                  name="projectNumber"
+                  type="text"
+                  className="form-control"
+                  id="nomorProject"
+                  placeholder="Nomor Project"
+                />
+              </div>
+            </div>
+            <div className="mb-3">
+              <label htmlFor="dokumen" className="form-label">
+                Dokumen
+              </label>
+              <input
+                onChange={handleDocumentFile}
+                className="form-control"
+                type="file"
+                id="formFile"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="address" className="form-label">
+                Alamat
+              </label>
+              <textarea
+                value={instansiData.address}
+                onChange={handleChange}
+                name="address"
+                className="form-control"
+                id="address"
+                rows="3"
+              ></textarea>
+            </div>
+            <div className="button-save-instansi-wrapper row">
+              {isInstansiSaved ? (
+                <>
+                  <button
+                    className="btn btn-success w-100"
+                    type="button"
+                    onClick={handleInstansiWillUpdate}
+                  >
+                    Edit Instansi
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="btn btn-add w-100"
+                    type="submit"
+                    onClick={handleSaveInstansi}
+                  >
+                    Simpan Instansi
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          <div className="mb-3">
-            <label htmlFor="address" className="form-label">
-              Alamat
-            </label>
-            <textarea className="form-control" id="address" rows="3"></textarea>
-          </div>
-          <div className="button-save-instansi-wrapper">
-            {isInstansiSaved ? (
-              <>
-                <button className="btn btn-success w-100" type="button">
-                  Edit Instansi
-                </button>
-              </>
-            ) : (
-              <>
-                <button className="btn btn-add w-100" type="button">
-                  Simpan Instansi
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        )}
+        {/* </form> */}
         <hr />
         <div className="form-barang">
           <div className="form-barang-header d-flex align-items-center justify-content-between">
