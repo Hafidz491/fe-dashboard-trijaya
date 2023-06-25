@@ -98,7 +98,7 @@ function FormAddUser({showModalAddUser, handleShowModalAddUser, handleShowToast}
                             onChange={(e) => setSelectedRole(e.target.value)}
                             className="form-select" aria-label="Default select example">
                             <option value="Admin">Admin</option>
-                            <option value="Staff" selected>Staff</option>
+                            <option value="Staff">Staff</option>
                         </select>
                     </div>
                     <div className="mb-3">
