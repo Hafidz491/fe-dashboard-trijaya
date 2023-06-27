@@ -12,9 +12,9 @@ import { Toast, ToastContainer } from 'react-bootstrap';
 
 function ManageUser() {
   const [showModalAddUser, setShowModalAddUser] = useState(false);
-  const [responseMessage, setResponseMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [thoastVariant, setThoastVariant] = useState('success');
+  const [responseMessage, setResponseMessage] = useState('');
   const [fethingData, setFetchingData] = useState(false);
 
   const [listUser, setListUser] = useState([]);
