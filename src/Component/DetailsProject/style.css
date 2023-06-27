@@ -1,0 +1,10 @@
+.detail-project-header {
+  margin-top: 40px;
+}
+
+.detail-project-card {
+  background-color: #ffffff;
+  margin-top: 40px;
+  border-radius: 30px;
+  padding: 20px;
+}
