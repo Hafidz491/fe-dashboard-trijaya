@@ -66,6 +66,7 @@ export const data = {
 function Project() {
   const [projectsWithStatusFalse, setProjectsWithStatusFalse] = useState([]);
   const [projectWithStatusTrue, setProjectWithStatusTrue] = useState([]);
+  const [fetchingData, setFetchingData] = useState(false);
   useEffect(() => {
     const getProjectsWithFalseStatus = async () => {
       const response = await api.get('/project/all/false');
@@ -79,7 +80,7 @@ function Project() {
 
     getProjectsWithFalseStatus();
     getProjectsWithTrueStatus();
-  }, []);
+  }, [fetchingData]);
   const [showModalProject, setShowModalProject] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
@@ -244,6 +245,8 @@ function Project() {
           handleShowToast={handleShowToast}
           handleShowModalProject={handleShowModalProject}
           showModalProject={showModalProject}
+          fetchingDataFromParentPage={setFetchingData}
+          valueFetchingDataFromParentPage={fetchingData}
         />
       </Main>
     </div>

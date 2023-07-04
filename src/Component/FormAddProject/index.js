@@ -11,6 +11,8 @@ function FormAddProject({
   showModalProject,
   handleShowModalProject,
   handleShowToast,
+  fetchingDataFromParentPage,
+  valueFetchingDataFromParentPage,
 }) {
   const { token } = useAuth();
   const [isInstansiSaved, setIsInstansiSaved] = useState(false);
@@ -161,6 +163,7 @@ function FormAddProject({
         },
       });
       setFetchingData(!fethingData);
+      handleShowToast(response.data.message, 'success');
     } catch (error) {
       handleShowToast(error.response.data.message, 'danger');
       console.log(error.response);
@@ -182,6 +185,7 @@ function FormAddProject({
     setIsInstansiSaved(false);
     setInstansiWillUpdate(false);
     setWillAddItem(false);
+    fetchingDataFromParentPage(!valueFetchingDataFromParentPage);
   };
 
   return (

@@ -20,7 +20,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
 import { faker } from '@faker-js/faker';
 import FormAddItem from '../FormAddItem';
 
@@ -127,8 +126,25 @@ function DetailsProject() {
   };
 
   const handleUpdateFinishedProject = async () => {
-    try
-  }
+    try {
+      let response = await api.put(
+        `project/update/finished/${instansiData.id}`,
+        {
+          isFinished: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      handleShowToast(response.data.message, 'success');
+      setFetchingData(!fetchingData);
+    } catch (error) {
+      handleShowToast(error.response.data.message, 'danger');
+      console.log(error);
+    }
+  };
 
   return (
     <div className="detail-project">
@@ -152,7 +168,12 @@ function DetailsProject() {
           <h5>Detail Project 🔍📃</h5>
           {!instansiData.isFinished ? (
             <>
-              <button className="btn btn-success">Tandai Selesai</button>
+              <button
+                className="btn btn-success"
+                onClick={handleUpdateFinishedProject}
+              >
+                Tandai Selesai
+              </button>
             </>
           ) : (
             <> </>
@@ -166,7 +187,13 @@ function DetailsProject() {
                   <h5 className="fw-semibold">
                     Project: {instansiData.projectNumber}
                   </h5>
-                  <button className="btn btn-add">Edit Instansi</button>
+                  {instansiData.isFinished ? (
+                    <></>
+                  ) : (
+                    <>
+                      <button className="btn btn-add">Edit Instansi</button>
+                    </>
+                  )}
                 </div>
                 <hr />
                 <div className="detail-project-card-body">
@@ -194,9 +221,18 @@ function DetailsProject() {
             <div className="data-table">
               <header className="d-flex justify-content-between p-3">
                 <h4 className="fw-bold">Data Barang</h4>
-                <button className="btn btn-add" onClick={handleShowModalItem}>
-                  Tambah Barang
-                </button>
+                {instansiData.isFinished ? (
+                  <></>
+                ) : (
+                  <>
+                    <button
+                      className="btn btn-add"
+                      onClick={handleShowModalItem}
+                    >
+                      Tambah Barang
+                    </button>
+                  </>
+                )}
               </header>
               <div className="table-wrapper p-3">
                 <table className="table table-borderless">
@@ -208,7 +244,13 @@ function DetailsProject() {
                       <th scope="col">Satuan</th>
                       <th scope="col">Harga</th>
                       <th scope="col">Total</th>
-                      <th scope="col">Aksi</th>
+                      {instansiData.isFinished ? (
+                        <></>
+                      ) : (
+                        <>
+                          <th scope="col">Aksi</th>
+                        </>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -231,12 +273,18 @@ function DetailsProject() {
                           })}
                         </td>
                         <td className="fw-bold">
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDeleteItem(item.id)}
-                          >
-                            <BsTrash3 />
-                          </button>
+                          {instansiData.isFinished ? (
+                            <></>
+                          ) : (
+                            <>
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => handleDeleteItem(item.id)}
+                              >
+                                <BsTrash3 />
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))}
