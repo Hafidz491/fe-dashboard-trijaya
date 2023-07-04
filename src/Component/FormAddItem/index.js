@@ -1,16 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import './style.css';
 import Modal from '../Modal';
 
-function FormAddItem({ showModalItem, handleShowModalItem, handleShowToast }) {
+import api from '../../Utils/ApiEndpoint';
+import { useAuth } from '../../Utils/AuthContext';
+
+function FormAddItem({
+  showModalItem,
+  handleShowModalItem,
+  handleShowToast,
+  instansiId,
+}) {
+  const { token } = useAuth();
+  const [itemData, setItemData] = useState({
+    itemName: '',
+    itemVolume: '',
+    itemUnit: '',
+    price: '',
+  });
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    setTotalPrice(itemData.itemVolume * itemData.price);
+  }, [itemData.price, itemData.itemVolume]);
+
+  const handleSaveItem = async (e) => {
+    e.preventDefault();
+    setTotalPrice(itemData.itemVolume * itemData.price);
+    const newData = {
+      ...itemData,
+      total: totalPrice,
+      instansiId: instansiId,
+    };
+
+    try {
+      let response = await api.post('project/add-item', newData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      handleShowToast(response.data.message, 'success');
+      handleShowModalItem();
+      setItemData({
+        itemName: '',
+        itemVolume: '',
+        itemUnit: '',
+        price: '',
+      });
+    } catch (error) {
+      handleShowToast(error.response.data.message, 'danger');
+      console.log(error.response);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setItemData({
+      ...itemData,
+      [name]: value,
+    });
+  };
+
   return (
     <Modal
       show={showModalItem}
       handleShowModal={handleShowModalItem}
       modalTitle={'Tambah Barang'}
     >
-      <form className="form-add-user">
+      <form className="form-add-user" onSubmit={handleSaveItem}>
         <div className="form-add-user mt-4">
           <div className="form-add-user">
             <div className="mb-3">
@@ -19,7 +77,9 @@ function FormAddItem({ showModalItem, handleShowModalItem, handleShowToast }) {
               </label>
               <input
                 required
-                name="name"
+                value={itemData.itemName}
+                onChange={handleChange}
+                name="itemName"
                 type="text"
                 className="form-control"
                 id="namaBarang"
@@ -34,8 +94,10 @@ function FormAddItem({ showModalItem, handleShowModalItem, handleShowToast }) {
                   </label>
                   <input
                     required
-                    name="email"
-                    type="email"
+                    value={itemData.itemVolume}
+                    onChange={handleChange}
+                    name="itemVolume"
+                    type="number"
                     className="form-control"
                     id="itemVolume"
                     placeholder="Volume Barang"
@@ -48,9 +110,11 @@ function FormAddItem({ showModalItem, handleShowModalItem, handleShowToast }) {
                     Satuan Barang
                   </label>
                   <input
+                    onChange={handleChange}
+                    name="itemUnit"
                     required
-                    name="password"
-                    type="password"
+                    value={itemData.itemUnit}
+                    type="text"
                     className="form-control"
                     id="unitItme"
                     placeholder="Satuan Barang"
@@ -59,17 +123,31 @@ function FormAddItem({ showModalItem, handleShowModalItem, handleShowToast }) {
               </div>
             </div>
             <div className="mb-3">
-              <label htmlFor="itemPrice" className="form-label">
+              <label htmlFor="harga" className="form-label">
                 Harga Barang
               </label>
-              <input
-                required
-                name="confirmPassword"
-                type="password"
-                className="form-control"
-                id="itemPrice"
-                placeholder="Harga Barang"
-              />
+              <div className="input-group">
+                <span className="input-group-text" id="basic-addon1">
+                  Rp
+                </span>
+                <input
+                  onChange={handleChange}
+                  value={itemData.total}
+                  required
+                  name="price"
+                  type="text"
+                  className="form-control"
+                  id="harga"
+                  placeholder="Harga Barang"
+                />
+                <span className="input-group-text" id="basic-addon1">
+                  Jumlah:{' '}
+                  {totalPrice.toLocaleString('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                  })}
+                </span>
+              </div>
             </div>
             <div className="mb-3">
               <button className="btn btn-add w-100">Tambah Barang</button>
