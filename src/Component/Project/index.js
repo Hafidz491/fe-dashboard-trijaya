@@ -50,13 +50,13 @@ export const data = {
   datasets: [
     {
       label: 'Proyek Dikerjakan',
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
       borderColor: 'rgb(255, 99, 132)',
       backgroundColor: 'rgba(255, 99, 132, 0.5)',
     },
     {
       label: 'Proyek Terselesaikan',
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
       borderColor: 'rgb(53, 162, 235)',
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
@@ -201,18 +201,35 @@ function Project() {
                     <tbody>
                       {projectWithStatusTrue.map((project, index) => (
                         <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{project.instansiName}</td>
-                          <td className="fw-bold">{project.totalPrice}</td>
+                          <td>
+                            <NavLink to={`/project/${project.id}`}>
+                              {index + 1}
+                            </NavLink>
+                          </td>
+                          <td>
+                            <NavLink to={`/project/${project.id}`}>
+                              {project.instansiName}
+                            </NavLink>
+                          </td>
+                          <td className="fw-bold">
+                            <NavLink to={`/project/${project.id}`}>
+                              {new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                              }).format(project.totalPrice)}
+                            </NavLink>
+                          </td>
                           <td className="fw-light">
-                            {new Date(project.createdAt).toLocaleDateString(
-                              'en-US',
-                              {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              }
-                            )}
+                            <NavLink to={`/project/${project.id}`}>
+                              {new Date(project.createdAt).toLocaleDateString(
+                                'id-ID',
+                                {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                }
+                              )}
+                            </NavLink>
                           </td>
                         </tr>
                       ))}
