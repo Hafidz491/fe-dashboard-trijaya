@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 
 import Modal from '../Modal';
 
@@ -15,18 +15,55 @@ function FormAddProject({
   const { token } = useAuth();
   const [isInstansiSaved, setIsInstansiSaved] = useState(false);
   const [instansiWillUpdate, setInstansiWillUpdate] = useState(false);
+  const [willAddItem, setWillAddItem] = useState(false);
   const [document, setDocument] = useState();
   const [instansiId, setInstansiId] = useState('');
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [listItem, setListItem] = useState([]);
+  const [fethingData, setFetchingData] = useState(false);
   const [instansiData, setInstansiData] = useState({
     instansiName: '',
     projectNumber: '',
     address: '',
   });
+  const [itemData, setItemData] = useState({
+    itemName: '',
+    itemVolume: '',
+    itemUnit: '',
+    price: '',
+  });
+
+  useEffect(() => {
+    setTotalPrice(itemData.itemVolume * itemData.price);
+  }, [itemData.price, itemData.itemVolume]);
+
+  useEffect(() => {
+    const fetchListItems = async () => {
+      try {
+        let response = await api.get(`project/item/${instansiId}`);
+        setListItem(response.data.data.items);
+      } catch (error) {
+        handleShowToast(error.response.data.message, 'danger');
+        console.log(error.response);
+      }
+    };
+    if (isInstansiSaved) {
+      fetchListItems();
+    }
+  }, [fethingData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInstansiData({
       ...instansiData,
+      [name]: value,
+    });
+  };
+
+  const handleChangeItemData = (e) => {
+    const { name, value } = e.target;
+    setItemData({
+      ...itemData,
       [name]: value,
     });
   };
@@ -87,9 +124,64 @@ function FormAddProject({
     }
   };
 
+  const handleSaveItem = async (e) => {
+    e.preventDefault();
+    setTotalPrice(itemData.itemVolume * itemData.price);
+    const newData = {
+      ...itemData,
+      total: totalPrice,
+      instansiId,
+    };
+
+    try {
+      let response = await api.post('project/add-item', newData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      handleShowToast(response.data.message, 'success');
+      setItemData({
+        itemName: '',
+        itemVolume: '',
+        itemUnit: '',
+        price: '',
+      });
+      setFetchingData(!fethingData);
+    } catch (error) {
+      handleShowToast(error.response.data.message, 'danger');
+      console.log(error.response);
+    }
+  };
+
+  const handleDeleteItem = async (id) => {
+    try {
+      let response = await api.delete(`project/delete-item/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setFetchingData(!fethingData);
+    } catch (error) {
+      handleShowToast(error.response.data.message, 'danger');
+      console.log(error.response);
+    }
+  };
+
   const handleInstansiWillUpdate = () => {
     setInstansiWillUpdate(true);
     setIsInstansiSaved(false);
+  };
+
+  const handleSubmit = async (e) => {
+    handleShowModalProject();
+    setInstansiData({
+      instansiName: '',
+      projectNumber: '',
+      address: '',
+    });
+    setIsInstansiSaved(false);
+    setInstansiWillUpdate(false);
+    setWillAddItem(false);
   };
 
   return (
@@ -167,13 +259,26 @@ function FormAddProject({
             <div className="button-save-instansi-wrapper row">
               {isInstansiSaved ? (
                 <>
-                  <button
-                    className="btn btn-success w-100"
-                    type="button"
-                    onClick={handleInstansiWillUpdate}
-                  >
-                    Edit Instansi
-                  </button>
+                  <div className="row">
+                    <div className="col-6">
+                      <button
+                        className="btn btn-success w-100"
+                        type="button"
+                        onClick={handleInstansiWillUpdate}
+                      >
+                        Edit Instansi
+                      </button>
+                    </div>
+                    <div className="col-6">
+                      <button
+                        className="btn btn-primary  w-100"
+                        type="button"
+                        onClick={() => setWillAddItem(!willAddItem)}
+                      >
+                        Tambah Barang
+                      </button>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
@@ -251,13 +356,26 @@ function FormAddProject({
             <div className="button-save-instansi-wrapper row">
               {isInstansiSaved ? (
                 <>
-                  <button
-                    className="btn btn-success w-100"
-                    type="button"
-                    onClick={handleInstansiWillUpdate}
-                  >
-                    Edit Instansi
-                  </button>
+                  <div className="row">
+                    <div className="col-6">
+                      <button
+                        className="btn btn-success w-100"
+                        type="button"
+                        onClick={handleInstansiWillUpdate}
+                      >
+                        Edit Instansi
+                      </button>
+                    </div>
+                    <div className="col-6">
+                      <button
+                        className="btn btn-success w-100"
+                        type="button"
+                        onClick={handleInstansiWillUpdate}
+                      >
+                        Edit Instansi
+                      </button>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
@@ -274,110 +392,137 @@ function FormAddProject({
           </div>
         )}
         {/* </form> */}
-        <hr />
-        <div className="form-barang">
-          <div className="form-barang-header d-flex align-items-center justify-content-between">
-            <h5>Masukan Barang</h5>
-            <button className="btn btn-add">Tambah Barang</button>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="namaBarang" className="form-label">
-              Nama Barang
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="namaBarang"
-              placeholder="Nama Barang"
-            />
-          </div>
-          <div className="mb-3 row">
-            <div className="col-6">
-              <label htmlFor="volume" className="form-label">
-                Volume Barang
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="volume"
-                placeholder="Volume Barang"
-              />
+        {willAddItem ? (
+          <>
+            <hr />
+            <div className="form-barang">
+              <div className="form-barang-header d-flex align-items-center justify-content-between">
+                <h5>Masukan Barang</h5>
+                <button className="btn btn-add" onClick={handleSaveItem}>
+                  Tambahkan Barang
+                </button>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="namaBarang" className="form-label">
+                  Nama Barang
+                </label>
+                <input
+                  onChange={handleChangeItemData}
+                  name="itemName"
+                  value={itemData.itemName}
+                  type="text"
+                  className="form-control"
+                  id="namaBarang"
+                  placeholder="Nama Barang"
+                />
+              </div>
+              <div className="mb-3 row">
+                <div className="col-6">
+                  <label htmlFor="volume" className="form-label">
+                    Volume Barang
+                  </label>
+                  <input
+                    onChange={handleChangeItemData}
+                    name="itemVolume"
+                    value={itemData.itemVolume}
+                    type="number"
+                    className="form-control"
+                    id="volume"
+                    placeholder="Volume Barang"
+                  />
+                </div>
+                <div className="col-6">
+                  <label htmlFor="satuan" className="form-label">
+                    Satuan
+                  </label>
+                  <input
+                    onChange={handleChangeItemData}
+                    name="itemUnit"
+                    value={itemData.itemUnit}
+                    type="text"
+                    className="form-control"
+                    id="satuan"
+                    placeholder="Satuan"
+                  />
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="harga" className="form-label">
+                  Harga Barang
+                </label>
+                <div className="input-group">
+                  <input
+                    onChange={handleChangeItemData}
+                    name="price"
+                    value={itemData.price}
+                    type="number"
+                    className="form-control"
+                    id="harga"
+                    placeholder="Harga Barang"
+                  />
+                  <span className="input-group-text" id="basic-addon1">
+                    Jumlah:{' '}
+                    {totalPrice.toLocaleString('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                    })}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="col-6">
-              <label htmlFor="satuan" className="form-label">
-                Satuan
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="satuan"
-                placeholder="Satuan"
-              />
+          </>
+        ) : (
+          <> </>
+        )}
+        {willAddItem ? (
+          <>
+            <hr />
+            <div className="preview-barang">
+              <h5>Preview Barang</h5>
+              <div className="table-wrapper p-3">
+                <table className="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nama Barang</th>
+                      <th scope="col">Volume</th>
+                      <th scope="col">Satuan</th>
+                      <th scope="col">Harga Satuan</th>
+                      <th scope="col">Jumlah Harga</th>
+                      <th scope="col">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {listItem.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.itemName}</td>
+                        <td>{item.itemVolume}</td>
+                        <td>{item.itemUnit}</td>
+                        <td>{item.price}</td>
+                        <td>{item.total}</td>
+                        <td>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteItem(item.id)}
+                          >
+                            <BsTrash3 />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="harga" className="form-label">
-              Harga Barang
-            </label>
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                id="harga"
-                placeholder="Harga Barang"
-              />
-              <span className="input-group-text" id="basic-addon1">
-                Jumlah: Rp12.000.000
-              </span>
-            </div>
-          </div>
-        </div>
+          </>
+        ) : (
+          <> </>
+        )}
         <hr />
-        <div className="preview-barang">
-          <h5>Preview Barang</h5>
-          <div className="table-wrapper p-3">
-            <table className="table table-borderless">
-              <thead>
-                <tr>
-                  <th scope="col">Nama Barang</th>
-                  <th scope="col">Volume</th>
-                  <th scope="col">Satuan</th>
-                  <th scope="col">Harga Satuan</th>
-                  <th scope="col">Jumlah Harga</th>
-                  <th scope="col">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Beras Multidimensi</td>
-                  <td>2</td>
-                  <td>10</td>
-                  <td>Rp12.000</td>
-                  <td>Rp12.000.000</td>
-                  <td>
-                    <button className="btn btn-danger">
-                      <BsTrash3 />
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Beras Multidimensi</td>
-                  <td>2</td>
-                  <td>10</td>
-                  <td>Rp12.000</td>
-                  <td>Rp12.000.000</td>
-                  <td>
-                    <button className="btn btn-danger">
-                      <BsTrash3 />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <hr />
-        <button type="submit" className="btn btn-add w-100">
+        <button
+          type="submit"
+          className="btn btn-add w-100"
+          onClick={handleSubmit}
+        >
           Submit
         </button>
       </div>
