@@ -6,6 +6,7 @@ import Main from '../Main';
 import { BsTrash3 } from 'react-icons/bs';
 import { Toast, ToastContainer } from 'react-bootstrap';
 const { useParams } = require('react-router-dom');
+import { useAuth } from '../../Utils/AuthContext';
 
 import api from '../../Utils/ApiEndpoint';
 
@@ -67,14 +68,16 @@ export const data = {
 };
 function DetailsProject() {
   const { id } = useParams();
+  const { token } = useAuth();
   const [fetchingData, setFetchingData] = useState(false);
   const [instansiData, setInstansiData] = useState({});
+  const [listItems, setListItems] = useState([]);
 
   useEffect(() => {
     const fetchAllItem = async () => {
       try {
-        const response = await api.get('item/all');
-        setListItems(response.data.data);
+        const response = await api.get(`project/item/${id}`);
+        setListItems(response.data.data.items);
       } catch (error) {
         console.log(error);
       }
@@ -88,8 +91,10 @@ function DetailsProject() {
         console.log(error);
       }
     };
+
+    fetchAllItem();
     getProjectDetail();
-  }, []);
+  }, [fetchingData]);
 
   const [showModalItem, setShowModalItem] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -104,7 +109,26 @@ function DetailsProject() {
     setShowToast(!showToast);
     setThoastVariant(toastVariant);
     setResponseMessage(responseMessage);
+    setFetchingData(!fetchingData);
   };
+
+  const handleDeleteItem = async (id) => {
+    try {
+      await api.delete(`project/delete-item/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      handleShowToast('Data berhasil dihapus', 'success');
+      setFetchingData(!fetchingData);
+    } catch (error) {
+      handleShowToast('Data gagal dihapus', 'danger');
+    }
+  };
+
+  const handleUpdateFinishedProject = async () => {
+    try
+  }
 
   return (
     <div className="detail-project">
@@ -124,15 +148,24 @@ function DetailsProject() {
         </Toast>
       </ToastContainer>
       <Main>
-        <header className="detail-project-header">
+        <header className="detail-project-header d-flex align-items-center justify-content-between">
           <h5>Detail Project 🔍📃</h5>
+          {!instansiData.isFinished ? (
+            <>
+              <button className="btn btn-success">Tandai Selesai</button>
+            </>
+          ) : (
+            <> </>
+          )}
         </header>
         <div className="main-detail-project">
           <div className="row">
             <div className="col-xxl-6">
               <div className="detail-project-card">
                 <div className="detail-project-card-header d-flex align-items-center justify-content-between">
-                  <h5 className="fw-semibold">Project: PX-92h28s</h5>
+                  <h5 className="fw-semibold">
+                    Project: {instansiData.projectNumber}
+                  </h5>
                   <button className="btn btn-add">Edit Instansi</button>
                 </div>
                 <hr />
@@ -144,18 +177,18 @@ function DetailsProject() {
                   <h6 className="fw-medium">Alamat :</h6>
                   <p>{instansiData.address}</p>
                   <h6 className="fw-medium">Status :</h6>
-                  <p className="text-warning">
+                  <p
+                    className={
+                      instansiData.isFinished ? 'text-success' : 'text-warning'
+                    }
+                  >
                     {instansiData.isFinished ? 'Selesai' : 'Sedang Dikerjakan'}
                   </p>
                   {/* <p className="text-success">Selesai</p> */}
                 </div>
               </div>
             </div>
-            <div className="col-xxl-6">
-              <div className="chart-data">
-                <Line data={data} options={options} />
-              </div>
-            </div>
+            <div className="col-xxl-6"></div>
           </div>
           <div className="data-item-detail-project">
             <div className="data-table">
@@ -174,29 +207,66 @@ function DetailsProject() {
                       <th scope="col">Volume</th>
                       <th scope="col">Satuan</th>
                       <th scope="col">Harga</th>
+                      <th scope="col">Total</th>
                       <th scope="col">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
+                    {listItems.map((item, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item.itemName}</td>
+                        <td className="">{item.itemVolume}</td>
+                        <td className="fw-light">{item.itemUnit}</td>
+                        <td className="fw-bold">
+                          {item.price.toLocaleString('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                          })}
+                        </td>
+                        <td>
+                          {item.total.toLocaleString('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                          })}
+                        </td>
+                        <td className="fw-bold">
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteItem(item.id)}
+                          >
+                            <BsTrash3 />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                     <tr>
-                      <td>1</td>
-                      <td>Router RTRW NET</td>
-                      <td className="">1</td>
-                      <td className="fw-light">20</td>
-                      <td className="fw-bold">200.000.000</td>
-                      <td className="fw-bold">
-                        <button className="btn btn-danger">
-                          <BsTrash3 />
-                        </button>
-                      </td>
+                      <td></td>
                     </tr>
                   </tbody>
+                  <tfoot className="tfoot">
+                    <tr>
+                      <th id="total" className="fw-bold" colspan="5">
+                        Total :
+                      </th>
+                      <td className="fw-bold">
+                        {parseInt(instansiData.totalPrice, 10).toLocaleString(
+                          'id-ID',
+                          {
+                            style: 'currency',
+                            currency: 'IDR',
+                          }
+                        )}
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
           </div>
         </div>
         <FormAddItem
+          instansiId={id}
           handleShowModalItem={handleShowModalItem}
           showModalItem={showModalItem}
           handleShowToast={handleShowToast}
