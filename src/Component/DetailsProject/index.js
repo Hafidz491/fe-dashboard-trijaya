@@ -201,6 +201,15 @@ function DetailsProject() {
                   <p>{instansiData.instansiName}</p>
                   <h6 className="fw-medium">Nomor Project :</h6>
                   <p>{instansiData.projectNumber}</p>
+                  <h6 className="fw-medium">Berkas Dokumen :</h6>
+                  <p>
+                    <a
+                      target="_blank"
+                      href={`http://localhost:5000/document/${instansiData.instansiName}/${instansiData.document}`}
+                    >
+                      {instansiData.document}
+                    </a>
+                  </p>
                   <h6 className="fw-medium">Alamat :</h6>
                   <p>{instansiData.address}</p>
                   <h6 className="fw-medium">Status :</h6>
