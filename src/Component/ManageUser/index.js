@@ -16,6 +16,8 @@ function ManageUser() {
   const [thoastVariant, setThoastVariant] = useState('success');
   const [responseMessage, setResponseMessage] = useState('');
   const [fethingData, setFetchingData] = useState(false);
+  const [willUpdateUser, setWillUpdateUser] = useState(false);
+  const [willUpdateUserId, setWillUpdateUserId] = useState(0);
 
   const [listUser, setListUser] = useState([]);
 
@@ -34,6 +36,7 @@ function ManageUser() {
 
   const handleShowModalAddUser = () => {
     setShowModalAddUser(!showModalAddUser);
+    setWillUpdateUser(false)
   };
 
   const handleShowToast = (responseMessage, toastVariant) => {
@@ -51,6 +54,12 @@ function ManageUser() {
     } catch (error) {
       handleShowToast(error.response.data.message, 'danger');
     }
+  };
+
+  const handleEditUser = (id) => {
+    setWillUpdateUser(true);
+    setShowModalAddUser(!showModalAddUser);
+    setWillUpdateUserId(id);
   };
 
   return (
@@ -111,7 +120,11 @@ function ManageUser() {
                       <td className="fw-bold">{user.email}</td>
                       <td>{user.role}</td>
                       <td>
-                        <button type="button" className="btn btn-add me-3">
+                        <button
+                          type="button"
+                          className="btn btn-add me-3"
+                          onClick={() => handleEditUser(user.id)}
+                        >
                           <TbEditCircle size={20} />
                         </button>
                         <button
@@ -130,6 +143,9 @@ function ManageUser() {
           </div>
         </div>
         <FormAddUser
+          setWillUpdateUser={setWillUpdateUser}
+          willUpdateUser={willUpdateUser}
+          willUpdateUserId={willUpdateUserId}
           handleShowToast={handleShowToast}
           showModalAddUser={showModalAddUser}
           handleShowModalAddUser={handleShowModalAddUser}
