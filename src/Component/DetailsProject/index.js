@@ -22,6 +22,7 @@ import {
 } from 'chart.js';
 import { faker } from '@faker-js/faker';
 import FormAddItem from '../FormAddItem';
+import FormUpdateProject from '../FormUpdateProject';
 
 ChartJS.register(
   CategoryScale,
@@ -99,9 +100,16 @@ function DetailsProject() {
   const [showToast, setShowToast] = useState(false);
   const [thoastVariant, setThoastVariant] = useState('success');
   const [responseMessage, setResponseMessage] = useState('');
+  const [showModalUpdateProject, setShowModalUpdateProject] = useState(false);
+  const [willUpdateProjectId, setWillUpdateProjectId] = useState(0);
 
   const handleShowModalItem = () => {
     setShowModalItem(!showModalItem);
+  };
+
+  const handleShowModalUpdateProject = (id) => {
+    setShowModalUpdateProject(!showModalUpdateProject);
+    setWillUpdateProjectId(id);
   };
 
   const handleShowToast = (responseMessage, toastVariant) => {
@@ -191,7 +199,14 @@ function DetailsProject() {
                     <></>
                   ) : (
                     <>
-                      <button className="btn btn-add">Edit Instansi</button>
+                      <button
+                        className="btn btn-add"
+                        onClick={() =>
+                          handleShowModalUpdateProject(instansiData.id)
+                        }
+                      >
+                        Edit Instansi
+                      </button>
                     </>
                   )}
                 </div>
@@ -203,12 +218,18 @@ function DetailsProject() {
                   <p>{instansiData.projectNumber}</p>
                   <h6 className="fw-medium">Berkas Dokumen :</h6>
                   <p>
-                    <a
-                      target="_blank"
-                      href={`http://localhost:5000/document/${instansiData.instansiName}/${instansiData.document}`}
-                    >
-                      {instansiData.document}
-                    </a>
+                    {instansiData.document === null ? (
+                      <>Belum ada dokumen</>
+                    ) : (
+                      <>
+                        <a
+                          target="_blank"
+                          href={`http://localhost:5000/document/${instansiData.instansiName}/${instansiData.document}`}
+                        >
+                          {instansiData.document}
+                        </a>
+                      </>
+                    )}
                   </p>
                   <h6 className="fw-medium">Alamat :</h6>
                   <p>{instansiData.address}</p>
@@ -326,6 +347,12 @@ function DetailsProject() {
           instansiId={id}
           handleShowModalItem={handleShowModalItem}
           showModalItem={showModalItem}
+          handleShowToast={handleShowToast}
+        />
+        <FormUpdateProject
+          handleShowModalUpdateProject={handleShowModalUpdateProject}
+          showModalUpdateProject={showModalUpdateProject}
+          willUpdateProjectId={willUpdateProjectId}
           handleShowToast={handleShowToast}
         />
       </Main>
