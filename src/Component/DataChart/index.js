@@ -42,7 +42,10 @@ export const data = {
   datasets: [
     {
       label: 'Project Dikerjakan',
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      data: {
+        January: faker.datatype.number({ min: 0, max: 1000 }),
+        February: faker.datatype.number({ min: 0, max: 1000 }),
+      },
       backgroundColor: 'rgba(255, 99, 132, 0.5)',
       borderRadius: 50,
     },

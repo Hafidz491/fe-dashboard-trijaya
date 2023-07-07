@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Main from '../Main';
 import DashboardInfo from '../DashboardInfo';
 import DataChart from '../DataChart';
 
-import { FiSearch } from 'react-icons/fi';
+import api from '../../Utils/ApiEndpoint';
+import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
 
 import './style.css';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import { FiSearch } from 'react-icons/fi';
 
 import { useAuth } from '../../Utils/AuthContext';
 
@@ -37,6 +39,16 @@ export const data = {
 
 function Dashboard() {
   const { currentUser } = useAuth();
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/project/all/false');
+      setProjects(response.data.data);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="dashboard">
@@ -80,42 +92,40 @@ function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>RSUD Muhammadiyah Kab. Blora</td>
-                      <td className="fw-bold">Rp.12.500.000,00</td>
-                      <td className="fw-light">15, Juni 2023</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>RSUD Muhammadiyah Kab. Blora</td>
-                      <td className="fw-bold">Rp.12.500.000,00</td>
-                      <td className="fw-light">15, Juni 2023</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>RSUD Muhammadiyah Kab. Blora</td>
-                      <td className="fw-bold">Rp.12.500.000,00</td>
-                      <td className="fw-light">15, Juni 2023</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>RSUD Muhammadiyah Kab. Blora</td>
-                      <td className="fw-bold">Rp.12.500.000,00</td>
-                      <td className="fw-light">15, Juni 2023</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>RSUD Muhammadiyah Kab. Blora</td>
-                      <td className="fw-bold">Rp.12.500.000,00</td>
-                      <td className="fw-light">15, Juni 2023</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>RSUD Muhammadiyah Kab. Blora</td>
-                      <td className="fw-bold">Rp.12.500.000,00</td>
-                      <td className="fw-light">15, Juni 2023</td>
-                    </tr>
+                    {projects.map((project, index) => (
+                      <tr key={index}>
+                        <td>
+                          <NavLink to={`/project/${project.id}`}>
+                            {index + 1}
+                          </NavLink>
+                        </td>
+                        <td>
+                          <NavLink to={`/project/${project.id}`}>
+                            {project.instansiName}
+                          </NavLink>
+                        </td>
+                        <td className="fw-bold">
+                          <NavLink to={`/project/${project.id}`}>
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency',
+                              currency: 'IDR',
+                            }).format(project.totalPrice)}
+                          </NavLink>
+                        </td>
+                        <td className="fw-light">
+                          <NavLink to={`/project/${project.id}`}>
+                            {new Date(project.createdAt).toLocaleDateString(
+                              'id-ID',
+                              {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              }
+                            )}
+                          </NavLink>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
