@@ -38,14 +38,45 @@ const labels = [
   'Desember',
 ];
 
+const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+    title: {
+      display: true,
+      text: 'Data Project',
+    },
+  },
+};
+
 function DataChart() {
   const [projectsStatsPerMonth, setProjectsStatsPerMonth] = useState([]);
+  const [projectData, setProjectData] = useState([]);
+  const [projectRevenue, setProjectRevenue] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      let tmpProjectData = [];
+      let tmpRevenueData = [];
       const response = await api.get('/project/all/month');
-      console.log(response.data.data);
-      setProjectsStatsPerMonth(response.data.data);
+      for (let i = 0; i < labels.length; i++) {
+        let month = labels[i];
+        let data = response.data.data.find(
+          (project) => project.month === month
+        );
+
+        if (data) {
+          tmpProjectData.push(data.totalProjects);
+          tmpRevenueData.push(data.totalRevenue);
+        } else {
+          tmpProjectData.push(0);
+          tmpRevenueData.push(0);
+        }
+      }
+      setProjectData(tmpProjectData);
+      setProjectRevenue(tmpRevenueData);
     };
 
     fetchData();
@@ -56,33 +87,21 @@ function DataChart() {
     datasets: [
       {
         label: 'Project Dikerjakan',
-        data: projectsStatsPerMonth.map((project) => project.totalProjects),
+        data: projectData,
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
         borderRadius: 50,
       },
       {
         label: 'Pendapatan',
-        data: projectsStatsPerMonth.map((project) => project.totalRevenue),
+        data: projectRevenue,
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
         borderColor: 'rgba(53, 162, 235, 0.5)',
         borderRadius: 50,
         type: 'line',
+        tension: 0.1,
         yAxisID: 'income-axis',
       },
     ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Data Project',
-      },
-    },
   };
 
   return (

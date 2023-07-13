@@ -1,67 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Main from '../Main';
 import FormAddProject from '../FormAddProject';
+import DataChartProject from '../DataCharProject';
 import { ToastContainer, Toast } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom';
 import './style.css';
 
 import api from '../../Utils/ApiEndpoint';
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Data Proyek Bulanan',
-    },
-  },
-};
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Proyek Dikerjakan',
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Proyek Terselesaikan',
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
 
 function Project() {
   const [projectsWithStatusFalse, setProjectsWithStatusFalse] = useState([]);
@@ -125,7 +70,7 @@ function Project() {
         <div className="project-content">
           <div className="chart-project">
             <div className="chart-data">
-              <Line data={data} options={options} />
+              <DataChartProject />
             </div>
           </div>
           <div className="detail-project row mb-4">
