@@ -64,13 +64,8 @@ function Dashboard() {
           <div className="dashboard-content">
             <DashboardInfo />
             <div className="data-information-wrapper row">
-              <div className="col-8">
+              <div className="col-12">
                 <DataChart />
-              </div>
-              <div className="col-4">
-                <div className="chart-data">
-                  <Pie data={data} />
-                </div>
               </div>
             </div>
             <div className="data-table mb-4">

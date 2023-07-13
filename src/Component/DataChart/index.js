@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Chart as ChartJS,
@@ -10,8 +10,9 @@ import {
   Legend,
 } from 'chart.js';
 
+import api from '../../Utils/ApiEndpoint';
+
 import { Bar } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
 
 ChartJS.register(
   CategoryScale,
@@ -22,43 +23,68 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Data Project',
-    },
-  },
-};
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Project Dikerjakan',
-      data: {
-        January: faker.datatype.number({ min: 0, max: 1000 }),
-        February: faker.datatype.number({ min: 0, max: 1000 }),
-      },
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      borderRadius: 50,
-    },
-    {
-      label: 'Pendapatan',
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      borderRadius: 50,
-    },
-  ],
-};
+const labels = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'Desember',
+];
 
 function DataChart() {
+  const [projectsStatsPerMonth, setProjectsStatsPerMonth] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/project/all/month');
+      console.log(response.data.data);
+      setProjectsStatsPerMonth(response.data.data);
+    };
+
+    fetchData();
+  }, []);
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Project Dikerjakan',
+        data: projectsStatsPerMonth.map((project) => project.totalProjects),
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderRadius: 50,
+      },
+      {
+        label: 'Pendapatan',
+        data: projectsStatsPerMonth.map((project) => project.totalRevenue),
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        borderColor: 'rgba(53, 162, 235, 0.5)',
+        borderRadius: 50,
+        type: 'line',
+        yAxisID: 'income-axis',
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Data Project',
+      },
+    },
+  };
+
   return (
     <div className="chart-data">
       <Bar data={data} options={options} />
