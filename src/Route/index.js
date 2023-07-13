@@ -7,6 +7,7 @@ import {
   UsersPage,
   LoginPage,
   DetailsProjectPage,
+  PrintProjectPage,
 } from '../Pages';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -16,7 +17,7 @@ const index = () => {
       <BrowserRouter>
         <Switch>
           <Route path="/login" exact component={LoginPage} />
-
+          <Route path="/project/print/:id" component={PrintProjectPage} exact />
           <ProtectedRoute path="/" component={DashboardPage} exact />
           <ProtectedRoute path="/projects" component={ProjectsPage} exact />
           <ProtectedRoute path="/users" component={UsersPage} exact />

@@ -71,8 +71,8 @@ function DataChart() {
           tmpProjectData.push(data.totalProjects);
           tmpRevenueData.push(data.totalRevenue);
         } else {
-          tmpProjectData.push(0);
-          tmpRevenueData.push(0);
+          tmpProjectData.push(null);
+          tmpRevenueData.push(null);
         }
       }
       setProjectData(tmpProjectData);

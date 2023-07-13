@@ -5,67 +5,13 @@ import Main from '../Main';
 
 import { BsTrash3 } from 'react-icons/bs';
 import { Toast, ToastContainer } from 'react-bootstrap';
-const { useParams } = require('react-router-dom');
+const { useParams, NavLink } = require('react-router-dom');
 import { useAuth } from '../../Utils/AuthContext';
 
 import api from '../../Utils/ApiEndpoint';
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { faker } from '@faker-js/faker';
 import FormAddItem from '../FormAddItem';
 import FormUpdateProject from '../FormUpdateProject';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Data Proyek Bulanan',
-    },
-  },
-};
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Proyek Dikerjakan',
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Proyek Terselesaikan',
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
 function DetailsProject() {
   const { id } = useParams();
   const { token } = useAuth();
@@ -173,18 +119,33 @@ function DetailsProject() {
       </ToastContainer>
       <Main>
         <header className="detail-project-header d-flex align-items-center justify-content-between">
-          <h5>Detail Project 🔍📃</h5>
+          <h5 className="d-print-none">Detail Project 🔍📃</h5>
           {!instansiData.isFinished ? (
-            <>
+            <div className="right-side-btn">
               <button
-                className="btn btn-success"
+                className="btn btn-success me-2"
                 onClick={handleUpdateFinishedProject}
               >
                 Tandai Selesai
               </button>
-            </>
+              <NavLink
+                to={`/project/print/${instansiData.id}`}
+                className="btn btn-info d-print-none"
+                target="_blank"
+              >
+                Cetak Project
+              </NavLink>
+            </div>
           ) : (
-            <> </>
+            <>
+              {' '}
+              <NavLink
+                to={`/project/print/${instansiData.id}`}
+                className="btn btn-info d-print-none"
+              >
+                Cetak Project
+              </NavLink>
+            </>
           )}
         </header>
         <div className="main-detail-project">

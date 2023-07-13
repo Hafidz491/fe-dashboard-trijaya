@@ -6,6 +6,8 @@ import { useAuth } from '../Utils/AuthContext';
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   const { token } = useAuth();
 
+  console.log(token);
+
   return (
     <Route
       {...rest}

@@ -1,0 +1,85 @@
+.pdf-container {
+  color: #000 !important;
+  font-family: Arial, Helvetica, sans-serif;
+  width: 9in;
+  background-color: #fff;
+  margin: 0 auto;
+  height: 30cm;
+  padding: 20px 0 0 0;
+}
+
+.pdf-container header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdf-container header img {
+  width: 250px;
+  height: 100px;
+}
+
+.pdf-container header p {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pdf-content .section-header {
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  background-color: #16365c;
+  font-size: 13px;
+  height: 30px;
+  font-weight: 700;
+  padding: auto 0;
+}
+
+.instansi-info {
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.instansi-info table {
+  padding: 50px;
+  width: 100%;
+  border: 1px solid #000 !important;
+}
+
+.instansi-info table thead {
+  background-color: #000;
+  color: #fff;
+  text-align: left;
+}
+
+.instansi-info table tbody {
+  padding: 20px;
+  display: table-row-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+
+.instansi-info table p {
+  font-size: 13px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.instansi-info table input {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  width: 80%;
+}
+
+.btn-proses-pdf {
+  position: fixed !important;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50px !important;
+  background-color: #243549 !important;
+  bottom: 40px;
+  right: 200px;
+  color: #fff !important;
+}
