@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import './style.css';
+import "./style.css";
+import Image from "../../Assets/img/Logo.png";
 
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
-import api from '../../Utils/ApiEndpoint';
-import { MdPictureAsPdf } from 'react-icons/md';
+import api from "../../Utils/ApiEndpoint";
+import { MdPictureAsPdf } from "react-icons/md";
 
 function PrintProjectPage() {
   const { id } = useParams();
@@ -42,41 +43,26 @@ function PrintProjectPage() {
     <>
       <div className="pdf-container">
         <header>
-          <img
-            src="https://subs-fom-v2.netlify.app/static/media/BuanaLintas.8d9c76d8.png"
-            alt="Logo_Buana_Lintas_Media"
-          />
+          <img src={Image} alt="Logo_Tri_Jaya" />
           <p>
-            PT. TriJaya Digital Grup
+            CV TRI JAYA
             <br />
-            Bamboo Estate Kav 10 RT 009/ RW 033 Tapanrejo Tajem Maguwoharjo
-            Depok,
+            Blora, Padaan TR.02 RW.01 Japah
             <br />
-            Sleman, D.I, Yogyakarta 55282, Indonesia.
+            Telp. : +62-812-282-2406
             <br />
-            Telp. : +62-274-4361352
-            <br />
-            Email : Info@buanalintas.co.id, Web : http://www.buanalintas.co.id
+            Email : Trijaya47@yahoo.co.id
           </p>
         </header>
         <div className="pdf-content">
-          <div className="section-header">
-            <p>
-              Document Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-            </p>
-          </div>
+          <div className="section-header"></div>
           <div className="instansi-info">
+            <h5>INFORMASI INSTANSI :</h5>
             <table>
-              <thead>
-                <th colSpan="2">
-                  <span className="font-bold">INFORMASI INSTANSI</span>{' '}
-                  <span className="font-italic">/ Customer Information</span>
-                </th>
-              </thead>
               <tbody>
                 <tr>
                   <td>
-                    <p>Nama Instansi /</p>{' '}
+                    <p>Nama Instansi /</p>{" "}
                     <p className="font-italic">Company Name</p>
                   </td>
                   <td>
@@ -89,7 +75,7 @@ function PrintProjectPage() {
                 </tr>
                 <tr>
                   <td>
-                    <p>Nomor Project /</p>{' '}
+                    <p>Nomor Project /</p>{" "}
                     <p className="font-italic">Project Number</p>
                   </td>
                   <td>
@@ -140,15 +126,15 @@ function PrintProjectPage() {
                         <td className="">{item.itemVolume}</td>
                         <td className="fw-light">{item.itemUnit}</td>
                         <td className="fw-bold">
-                          {item.price.toLocaleString('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
+                          {item.price.toLocaleString("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
                           })}
                         </td>
                         <td>
-                          {item.total.toLocaleString('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
+                          {item.total.toLocaleString("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
                           })}
                         </td>
                         <td className="fw-bold"></td>
@@ -164,12 +150,12 @@ function PrintProjectPage() {
                         Total :
                       </th>
                       <td className="fw-bold">
-                        {' '}
+                        {" "}
                         {parseInt(instansiData.totalPrice, 10).toLocaleString(
-                          'id-ID',
+                          "id-ID",
                           {
-                            style: 'currency',
-                            currency: 'IDR',
+                            style: "currency",
+                            currency: "IDR",
                           }
                         )}
                       </td>
@@ -178,6 +164,14 @@ function PrintProjectPage() {
                 </table>
               </div>
             </div>
+          </div>
+          <div className="tanda-tangan_perusahaan">
+            <p>CV TRI JAYA</p>
+            <br />
+            <br />
+            <br />
+            <br />
+            <p>Joko Ahmad Siswanto, S.T</p>
           </div>
         </div>
       </div>

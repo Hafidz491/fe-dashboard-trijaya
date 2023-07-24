@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 import {
   NavLink,
   useLocation,
-} from 'react-router-dom/cjs/react-router-dom.min';
+} from "react-router-dom/cjs/react-router-dom.min";
 
-import './style.css';
+import "./style.css";
+import Image from "../../Assets/img/Logo.png";
 
-import { TbDashboard, TbCircleKey } from 'react-icons/tb';
-import { GoProject } from 'react-icons/go';
-import { FiChevronRight, FiChevronDown } from 'react-icons/fi';
-import { BiUserCircle } from 'react-icons/bi';
-import { AiOutlineLogout } from 'react-icons/ai';
+import { TbDashboard, TbCircleKey } from "react-icons/tb";
+import { GoProject } from "react-icons/go";
+import { FiChevronRight, FiChevronDown } from "react-icons/fi";
+import { BiUserCircle } from "react-icons/bi";
+import { AiOutlineLogout } from "react-icons/ai";
 
-import { useAuth } from '../../Utils/AuthContext';
+import { useAuth } from "../../Utils/AuthContext";
 
 function Sidebar() {
   const location = useLocation();
@@ -23,19 +24,16 @@ function Sidebar() {
 
   return (
     <div className="sidebar">
-      <header className="d-flex  text-center">
-        <TbDashboard size={25} color="#FF007A" />
-        <h3 className="ms-1">
-          Dashboard <span className="fs-7">V.01</span>
-        </h3>
+      <header className=" logo d-flex  text-center">
+        <img src={Image} alt="Logo_Tri_Jaya" />
       </header>
       <nav>
         <NavLink to="/">
           <div
             className={
-              pathname === '/'
-                ? 'nav-link d-flex align-items-center justify-content-between active'
-                : 'nav-link d-flex align-items-center justify-content-between'
+              pathname === "/"
+                ? "nav-link d-flex align-items-center justify-content-between active"
+                : "nav-link d-flex align-items-center justify-content-between"
             }
           >
             <div className="icon-font-wrapper d-flex align-items-center">
@@ -48,9 +46,9 @@ function Sidebar() {
         <NavLink to="/projects">
           <div
             className={
-              pathname === '/projects'
-                ? 'nav-link d-flex align-items-center justify-content-between active'
-                : 'nav-link d-flex align-items-center justify-content-between'
+              pathname === "/projects"
+                ? "nav-link d-flex align-items-center justify-content-between active"
+                : "nav-link d-flex align-items-center justify-content-between"
             }
           >
             <div className="icon-font-wrapper d-flex align-items-center">
@@ -63,9 +61,9 @@ function Sidebar() {
         <NavLink to="/users">
           <div
             className={
-              pathname === '/users'
-                ? 'nav-link d-flex align-items-center justify-content-between active'
-                : 'nav-link d-flex align-items-center justify-content-between'
+              pathname === "/users"
+                ? "nav-link d-flex align-items-center justify-content-between active"
+                : "nav-link d-flex align-items-center justify-content-between"
             }
           >
             <div className="icon-font-wrapper d-flex align-items-center">
@@ -80,8 +78,8 @@ function Sidebar() {
         <div
           className={
             showUserAction
-              ? 'user-action align-items-center justify-content-between'
-              : 'user-action display-user-action align-items-center justify-content-between'
+              ? "user-action align-items-center justify-content-between"
+              : "user-action display-user-action align-items-center justify-content-between"
           }
         >
           Logout
@@ -94,7 +92,7 @@ function Sidebar() {
           <div className="user-info-wrapper d-flex align-items-center">
             <img
               src={
-                'https://i.pinimg.com/originals/b1/e6/4c/b1e64c85ac76e465b277a11984e824cc.jpg'
+                "https://i.pinimg.com/originals/b1/e6/4c/b1e64c85ac76e465b277a11984e824cc.jpg"
               }
               alt=""
             />

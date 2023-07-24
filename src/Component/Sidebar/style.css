@@ -9,6 +9,10 @@
   box-sizing: border-box;
 }
 
+.logo {
+  justify-content: center;
+}
+
 .sidebar nav {
   margin: 0 auto;
   margin-top: 30px;

@@ -17,6 +17,8 @@
 .pdf-container header img {
   width: 250px;
   height: 100px;
+  margin-top: -30px;
+  margin-right: 10px;
 }
 
 .pdf-container header p {
@@ -44,13 +46,13 @@
 .instansi-info table {
   padding: 50px;
   width: 100%;
-  border: 1px solid #000 !important;
+  border: 1px solid #16365c !important;
 }
 
 .instansi-info table thead {
-  background-color: #000;
+  background-color: #16365c;
   color: #fff;
-  text-align: left;
+  text-align: center;
 }
 
 .instansi-info table tbody {
@@ -71,6 +73,14 @@
   border-left: none;
   border-right: none;
   width: 80%;
+}
+
+.tanda-tangan_perusahaan {
+  float: right;
+  margin-right: 75px;
+  margin-top: 50px;
+  width: 200px;
+  text-align: center;
 }
 
 .btn-proses-pdf {
